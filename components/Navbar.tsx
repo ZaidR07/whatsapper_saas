@@ -27,8 +27,7 @@ export default function Navbar() {
         const token = auth.getToken();
         if (!token) return;
 
-        const data = await clientMeApi.me();
-        const c = data?.client;
+        const c = await clientMeApi.me();
         if (!mounted || !c) return;
         setCredits(Number(c.credits ?? 0));
 

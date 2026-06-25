@@ -10,6 +10,6 @@ export type ClientMe = {
 export const clientMeApi = {
   me: async () => {
     const res = await api.get("/client/me");
-    return res.data as { success: boolean; client: ClientMe };
+    return (res.data?.client || res.data?.data) as ClientMe;
   },
 };
