@@ -84,7 +84,7 @@ function PieChart({ sent, failed, pending }: { sent: number; failed: number; pen
   );
 }
 
-export default function JobDetailsPage() {
+export default function ApiJobDetailsPage() {
   const params = useParams<{ jobId?: string }>();
   const jobId = String(params?.jobId || "");
 
@@ -101,7 +101,7 @@ export default function JobDetailsPage() {
     setLoading(true);
 
     reportApi
-      .jobReport(jobId, { search: search.trim() || undefined, page, limit })
+      .apiJobReport(jobId, { search: search.trim() || undefined, page, limit })
       .then((d) => {
         if (!mounted) return;
         setData(d || null);
@@ -163,7 +163,7 @@ export default function JobDetailsPage() {
     }
 
     const csv = `\uFEFF${lines.join("\n")}`;
-    const fileName = `job-${job?.jobId || jobId}-report.csv`;
+    const fileName = `api-job-${job?.jobId || jobId}-report.csv`;
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -177,7 +177,7 @@ export default function JobDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="text-lg font-semibold text-gray-900">My Job Details : - {jobId}</div>
+      <div className="text-lg font-semibold text-gray-900">API Job Details : - {jobId}</div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Job Information Card */}
@@ -190,7 +190,7 @@ export default function JobDetailsPage() {
             {infoRow("Job ID:", <span className="font-medium">{job?.jobId || jobId}</span>)}
             {infoRow("Job Status:", <StatusLabel status={String(job?.status || "-")} />)}
             {infoRow("Channel:", job?.channel || "-")}
-            {infoRow("IP Address:", job?.ip || "-")}
+            {infoRow("IP Address:", job?.ip || "API")}
             {infoRow(
               "Message:",
               <button
@@ -205,7 +205,7 @@ export default function JobDetailsPage() {
             )}
             {infoRow("Date:", job?.date ? formatDateTime(job.date) : "-")}
             {infoRow("Total Bill Credit:", job?.totalBillCredit ?? 0)}
-            {infoRow("Message Type:", job?.type || "WEB")}
+            {infoRow("Message Type:", job?.type || "API")}
           </div>
         </div>
 

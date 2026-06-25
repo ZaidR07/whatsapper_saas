@@ -28,11 +28,15 @@ body {
 input,
 textarea,
 select {
-  color: #000 !important;
+  color: rgb(17 24 39) !important;
+}
+
+select option {
+  color: rgb(17 24 39) !important;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #000 !important;
-  opacity: 0.6;
+  color: rgb(107 114 128) !important;
+  opacity: 1;
 }

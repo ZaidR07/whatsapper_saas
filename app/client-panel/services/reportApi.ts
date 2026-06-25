@@ -50,8 +50,18 @@ export const reportApi = {
     return res.data as WebReportResponse;
   },
 
+  apiReport: async (params: { date?: string; search?: string; page?: number; limit?: number }) => {
+    const res = await api.get("/client/api-report", { params });
+    return res.data as WebReportResponse;
+  },
+
   jobReport: async (jobId: string, params?: { search?: string; page?: number; limit?: number }) => {
     const res = await api.get(`/client/job-report/${encodeURIComponent(String(jobId))}`, { params });
+    return res.data as JobReportResponse;
+  },
+
+  apiJobReport: async (jobId: string, params?: { search?: string; page?: number; limit?: number }) => {
+    const res = await api.get(`/client/api-job-report/${encodeURIComponent(String(jobId))}`, { params });
     return res.data as JobReportResponse;
   },
 };

@@ -12,6 +12,9 @@ export const useSendCampaign = () => {
       deviceId: string;
       message: string;
       numbers: string[];
+      intervalSeconds?: number;
+      countryCode?: string | null;
+      attachments?: File[];
     }) => campaignApi.create(data),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["client-campaigns"] });
@@ -20,13 +23,15 @@ export const useSendCampaign = () => {
 
       try {
         const me = await clientProfileApi.me();
-        const client = me?.client;
+        const client = me?.client || me?.data;
         if (client?.id && client?.username) {
           auth.setClient({
             id: client.id,
             companyName: client.companyName,
             username: client.username,
             credits: Number(client.credits ?? 0),
+            mobile: client.mobile,
+            email: client.email,
           });
         }
       } catch {

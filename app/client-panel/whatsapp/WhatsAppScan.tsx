@@ -67,10 +67,10 @@ export default function WhatsAppScan({ method, phoneNumber, setShowScanModal, on
             {(data?.devices || []).length > 0 ? (
               (data?.devices || []).map((d) => (
                 <tr key={d.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">{d.deviceName || "Connected Device"}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{d.phoneNumber || "-"}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{d.ipAddress || "-"}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{new Date(d.createdAt).toLocaleString()}</td>
-                  <td className="px-6 py-4 text-sm font-mono text-blue-600">{d.sessionToken || "-"}</td>
+                  <td className="px-6 py-4 text-sm font-mono text-blue-600">{d.token || "-"}</td>
                   <td className="px-6 py-4">
                     <span
                       className={

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { auth } from "../utils/auth";
 
-const API_BASE_URL = "http://localhost:4000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const authHeader = () => {
  const token = auth.getToken();
@@ -10,7 +10,10 @@ const authHeader = () => {
 
 export const clientProfileApi = {
  me: async () => {
-  const response = await axios.get(`${API_BASE_URL}/client/me`, { headers: authHeader() });
+  const response = await axios.get(`${API_BASE_URL}/client/me`, { 
+    headers: authHeader(),
+    withCredentials: true 
+  });
   return response.data;
  },
 
@@ -21,7 +24,10 @@ export const clientProfileApi = {
   mobile: string;
   password: string;
  }) => {
-  const response = await axios.put(`${API_BASE_URL}/client/update-profile`, payload, { headers: authHeader() });
+  const response = await axios.put(`${API_BASE_URL}/client/update-profile`, payload, { 
+    headers: authHeader(),
+    withCredentials: true 
+  });
   return response.data;
  },
 };

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MoreVertical, Plus, Search } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Copy, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
+import { cn } from "@/app/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 
 import AddDeviceModal from "../whatsapp/AddDeviceModal";
@@ -93,7 +94,7 @@ function ConfirmModal({
             type="button"
             onClick={onCancel}
             disabled={busy}
-            className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-semibold disabled:opacity-50"
+            className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-semibold disabled:opacity-50 text-gray-800"
           >
             ❌ No
           </button>
@@ -122,7 +123,6 @@ export default function ScanDevicePage() {
   const [showScanModal, setShowScanModal] = useState(false);
   const [method, setMethod] = useState<"qr" | "pairing">("qr");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [deviceName, setDeviceName] = useState("");
   const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
@@ -147,9 +147,8 @@ export default function ScanDevicePage() {
     if (!q) return list;
     return list.filter((d) => {
       const channel = String(d.phoneNumber || "");
-      const ip = String(d.ipAddress || "");
-      const token = String(d.sessionToken || "");
-      return channel.toLowerCase().includes(q) || ip.toLowerCase().includes(q) || token.toLowerCase().includes(q);
+      const token = String(d.token || "");
+      return channel.toLowerCase().includes(q) || token.toLowerCase().includes(q);
     });
   }, [list, search]);
 
@@ -162,7 +161,6 @@ export default function ScanDevicePage() {
   const handleAddDevice = async () => {
     try {
       const res = await connectDevice.mutateAsync({
-        deviceName: deviceName.trim() || undefined,
         method,
         phoneNumber: method === "pairing" ? phoneNumber : undefined,
       });
@@ -180,7 +178,6 @@ export default function ScanDevicePage() {
       setShowScanModal(false);
       setActiveDeviceId(null);
       setPhoneNumber("");
-      setDeviceName("");
     }
   }, [deviceStatus.data, devices]);
 
@@ -225,53 +222,61 @@ export default function ScanDevicePage() {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-xl font-bold text-gray-900">Channels / Devices</h3>
-          <button
-            type="button"
-            onClick={handleAddDevice}
-            className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
-          >
-            <Plus className="w-4 h-4" /> Add Device
-          </button>
-        </div>
-
-        <div className="p-4 border-b border-gray-100 flex items-center justify-end">
-          <div className="flex items-center gap-2">
-            <div className="text-sm text-gray-600 font-semibold">Search:</div>
+          <div className="flex items-center gap-3">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search:"
-                className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                placeholder="Search..."
+                className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 w-56"
               />
             </div>
+            <button
+              type="button"
+              onClick={handleAddDevice}
+              className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+            >
+              <Plus className="w-4 h-4" /> Add Device
+            </button>
           </div>
         </div>
 
         <div className="overflow-x-auto overflow-y-visible">
-          <table className="w-full text-left min-w-[1100px]">
+          <table className="w-full text-left">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Channel</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">IP Address</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Device Added At</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Token</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">By System</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">By User</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
+                <th className="px-3 py-3 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-[140px]">Channel</th>
+                <th className="px-3 py-3 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-[100px]">Added At</th>
+                <th className="px-3 py-3 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-[180px]">Token</th>
+                <th className="px-3 py-3 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-[90px]">System</th>
+                <th className="px-3 py-3 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-[90px]">User</th>
+                <th className="px-3 py-3 text-[11px] font-bold text-gray-500 uppercase tracking-wider w-[100px]">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {(pageItems || []).length > 0 ? (
                 pageItems.map((d) => (
                   <tr key={d.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-gray-900">{d.phoneNumber || "-"}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{d.ipAddress || "-"}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{formatDateTime(d.createdAt)}</td>
-                    <td className="px-6 py-4 text-sm font-mono text-blue-600" title={d.sessionToken || ""}>
-                      {truncateMiddle(d.sessionToken || "-")}
+                    <td className="px-3 py-3 text-xs text-gray-900">{d.phoneNumber || "-"}</td>
+                    <td className="px-3 py-3 text-xs text-gray-500">{formatDateTime(d.createdAt)}</td>
+                    <td className="px-3 py-3 text-xs font-mono text-blue-600 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate max-w-[120px]" title={d.token || ""}>{d.token || "-"}</span>
+                        {d.token && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(d.token || "");
+                            }}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors text-gray-400 hover:text-blue-600"
+                            title="Copy Token"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <BySystemBadge status={d.status} />
@@ -280,75 +285,41 @@ export default function ScanDevicePage() {
                       <ByUserBadge userStatus={d.userStatus} />
                     </td>
                     <td className="px-6 py-4">
-                      <div className="relative overflow-visible inline-block" ref={openMenuFor === d.id ? menuRef : null}>
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => setOpenMenuFor((cur) => (cur === d.id ? null : d.id))}
-                          className="p-2 rounded-md border border-gray-200 hover:bg-gray-50"
+                          onClick={async () => {
+                            const res = await refreshDevice.mutateAsync(d.id).catch(() => null);
+                            const status = (res as any)?.device?.status;
+                            const phoneNumber = (res as any)?.device?.phoneNumber;
+                            if (status || phoneNumber) {
+                              patchDeviceInCache(d.id, {
+                                ...(status ? { status } : {}),
+                                ...(phoneNumber ? { phoneNumber } : {}),
+                              });
+                            }
+                          }}
+                          title="Refresh Status"
+                          className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-blue-600 transition-colors"
                         >
-                          <MoreVertical className="w-4 h-4 text-gray-600" />
+                          <RefreshCw className={cn("w-4 h-4", refreshDevice.isPending && "animate-spin")} />
                         </button>
-
-                        {openMenuFor === d.id ? (
-                          <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-50">
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                setOpenMenuFor(null);
-                                const res = await refreshDevice.mutateAsync(d.id).catch(() => null);
-                                const status = (res as any)?.device?.status;
-                                const phoneNumber = (res as any)?.device?.phoneNumber;
-                                if (status || phoneNumber) {
-                                  patchDeviceInCache(d.id, {
-                                    ...(status ? { status } : {}),
-                                    ...(phoneNumber ? { phoneNumber } : {}),
-                                  });
-                                }
-                              }}
-                              className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50"
-                            >
-                              Refresh Channel Status
-                            </button>
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                setOpenMenuFor(null);
-                                setConfirm({ deviceId: d.id, type: "online" });
-                              }}
-                              className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50"
-                            >
-                              Put ONLINE
-                            </button>
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                setOpenMenuFor(null);
-                                setConfirm({ deviceId: d.id, type: "offline" });
-                              }}
-                              className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50"
-                            >
-                              Put OFFLINE
-                            </button>
-                            <div className="h-px bg-gray-100" />
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                setOpenMenuFor(null);
-                                setConfirm({ deviceId: d.id, type: "logout_delete" });
-                              }}
-                              className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-                            >
-                              Logout &amp; Delete
-                            </button>
-                          </div>
-                        ) : null}
+                        
+                        <button
+                          type="button"
+                          onClick={() => setConfirm({ deviceId: d.id, type: "logout_delete" })}
+                          title="Logout & Delete"
+                          className="p-2 rounded-lg border border-red-100 bg-red-50 hover:bg-red-100 text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 italic">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 italic">
                     No devices found. Click 'Add Device' to scan.
                   </td>
                 </tr>
@@ -382,8 +353,6 @@ export default function ScanDevicePage() {
         setShowScanModal={setShowScanModal}
         method={method}
         setMethod={setMethod}
-        deviceName={deviceName}
-        setDeviceName={setDeviceName}
         phoneNumber={phoneNumber}
         setPhoneNumber={setPhoneNumber}
         wsStatus={{

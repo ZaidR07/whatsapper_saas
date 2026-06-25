@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/app/lib/utils";
 import { QrCode, RefreshCw, X } from "lucide-react";
@@ -10,8 +9,6 @@ type AddDeviceModalProps = {
   setShowScanModal: (open: boolean) => void;
   method: "qr" | "pairing";
   setMethod: (m: "qr" | "pairing") => void;
-  deviceName: string;
-  setDeviceName: (v: string) => void;
   phoneNumber: string;
   setPhoneNumber: (v: string) => void;
   wsStatus: {
@@ -28,8 +25,6 @@ export default function AddDeviceModal({
   setShowScanModal,
   method,
   setMethod,
-  deviceName,
-  setDeviceName,
   phoneNumber,
   setPhoneNumber,
   wsStatus,
@@ -40,10 +35,10 @@ export default function AddDeviceModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowScanModal(false)} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
-        <div className="p-5 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h3 className="text-xl font-bold text-gray-800">Add New Device</h3>
-          <button onClick={() => setShowScanModal(false)} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col h-[90vh]">
+        <div className="p-2 border-b border-gray-100 flex items-center justify-between shrink-0">
+          
+          <button onClick={() => setShowScanModal(false)} className="p-1 hover:bg-gray-100 rounded-full transition-colors ml-auto">
             <X className="w-6 h-6 text-gray-400" />
           </button>
         </div>
@@ -69,19 +64,8 @@ export default function AddDeviceModal({
           </button>
         </div>
 
-        <div className="p-6 flex-1 overflow-y-auto flex flex-col items-center bg-white space-y-6 text-center">
-          <div className="w-full max-w-[320px] space-y-2 text-left">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Device Name</label>
-            <input
-              type="text"
-              placeholder="e.g. Office WhatsApp"
-              value={deviceName}
-              onChange={(e) => setDeviceName(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium transition-all"
-            />
-            <p className="text-[10px] text-gray-400 ml-1 italic">* Optional, helps you identify devices</p>
-          </div>
 
+        <div className="flex-1 flex flex-col items-center bg-white space-y-4 text-center">
           {method === "qr" ? (
             <div className="p-4 border-2 border-blue-50 rounded-2xl bg-white shadow-xl transition-all hover:scale-[1.01] flex items-center justify-center min-h-[300px] w-full max-w-[320px]">
               {wsStatus.qr ? (
@@ -150,18 +134,9 @@ export default function AddDeviceModal({
 
           <button
             onClick={handleAddDevice}
-            className="text-sm font-bold text-blue-600 hover:text-blue-700 underline flex items-center justify-center gap-2 py-2 px-4 hover:bg-blue-50 rounded-lg transition-all"
+            className="text-sm font-bold text-blue-600 hover:text-blue-700 underline flex items-center justify-center gap-2 py-1 px-4 hover:bg-blue-50 rounded-lg transition-all"
           >
             <RefreshCw className="w-4 h-4" /> Retry Connection
-          </button>
-        </div>
-
-        <div className="p-5 bg-gray-50 border-t border-gray-100 flex items-center justify-center sm:justify-end gap-3 shrink-0">
-          <button
-            onClick={() => setShowScanModal(false)}
-            className="px-6 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg font-semibold transition-colors"
-          >
-            Close
           </button>
         </div>
       </div>

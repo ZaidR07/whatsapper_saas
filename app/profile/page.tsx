@@ -47,10 +47,10 @@ export default function ProfilePage() {
     setError("");
 
     const data = await clientProfileApi.me();
-    const client = data?.client;
+    const client = data?.data;
 
     setForm({
-     name: client?.name || "",
+     name: client?.clientName || "",
      companyName: client?.companyName || "",
      username: client?.username || "",
      email: client?.email || "",
@@ -59,12 +59,14 @@ export default function ProfilePage() {
      credits: Number(client?.credits ?? 0),
     });
 
-    if (client?.id && client?.username) {
+    if (client?._id && client?.username) {
      auth.setClient({
-      id: client.id,
+      id: client._id,
       companyName: client.companyName,
       username: client.username,
       credits: Number(client.credits ?? 0),
+      mobile: client.mobile,
+      email: client.email,
      });
     }
    } catch (e: any) {
@@ -100,11 +102,11 @@ export default function ProfilePage() {
    }
 
    const data = await clientProfileApi.updateProfile(payload);
-   const client = data?.client;
+   const client = data?.data;
 
    setForm((prev) => ({
     ...prev,
-    name: client?.name || prev.name,
+    name: client?.clientName || prev.name,
     companyName: client?.companyName || prev.companyName,
     username: client?.username || prev.username,
     email: client?.email || "",
@@ -113,12 +115,14 @@ export default function ProfilePage() {
     credits: Number(client?.credits ?? prev.credits),
    }));
 
-   if (client?.id && client?.username) {
+   if (client?._id && client?.username) {
     auth.setClient({
-     id: client.id,
+     id: client._id,
      companyName: client.companyName,
      username: client.username,
      credits: Number(client.credits ?? 0),
+     mobile: client.mobile,
+     email: client.email,
     });
    }
 

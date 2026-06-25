@@ -24,8 +24,16 @@ export default function LoginPage() {
    if (data?.token) {
     auth.setToken(data.token);
    }
-   if (data?.client) {
-    auth.setClient(data.client);
+   if (data?.client || data?.data) {
+    const client = data.client || data.data;
+    auth.setClient({
+      id: client.id || client._id,
+      companyName: client.companyName,
+      username: client.username,
+      credits: Number(client.credits ?? 0),
+      mobile: client.mobile,
+      email: client.email,
+    });
    }
 
    router.replace("/client-panel");

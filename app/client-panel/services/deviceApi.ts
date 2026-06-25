@@ -5,7 +5,7 @@ export type DeviceDto = {
  deviceName: string;
  ipAddress: string;
  createdAt: string;
- sessionToken: string;
+ token?: string;
  status: string;
  phoneNumber?: string;
  userStatus?: string;

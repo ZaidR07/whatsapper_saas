@@ -50,7 +50,6 @@ export default function Sidebar() {
   const menu: MenuItem[] = useMemo(
     () => [
       { label: "Dashboard", icon: LayoutDashboard, path: "/client-panel/dashboard" },
-      { label: "Logout", icon: LogOut, action: "logout" },
 
       { type: "label", label: "User" },
 
@@ -62,6 +61,7 @@ export default function Sidebar() {
         key: "reports",
         children: [
           { label: "Web Report", path: "/client-panel/reports/web" },
+          { label: "API Report", path: "/client-panel/reports/api" },
         ],
       },
 

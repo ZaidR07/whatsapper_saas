@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { User } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { User, ArrowLeft } from "lucide-react";
 
 import { auth } from "../app/client-panel/utils/auth";
 import { clientMeApi } from "../app/client-panel/services/clientMeApi";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [credits, setCredits] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -95,7 +96,19 @@ export default function Navbar() {
 
  return (
   <div className="fixed top-0 left-0 right-0 z-40 h-16 bg-white border-b border-gray-200">
-   <div className="h-full px-6 flex items-center justify-end">
+   <div className="h-full px-6 flex items-center justify-between">
+    {pathname !== "/client-panel/dashboard" ? (
+     <button
+      type="button"
+      onClick={() => router.push("/client-panel/dashboard")}
+      className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors"
+     >
+      <ArrowLeft className="w-4 h-4" />
+      Back to Dashboard
+     </button>
+    ) : (
+     <div />
+    )}
     <div className="flex items-center gap-4" ref={containerRef}>
      <div className="text-sm font-semibold text-gray-700">
       Credit available Whatsapp Api <span className="text-blue-600">[{credits}]</span>

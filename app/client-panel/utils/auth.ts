@@ -3,6 +3,8 @@ export type ClientInfo = {
  companyName: string;
  username: string;
  credits: number;
+ mobile?: string;
+ email?: string;
 };
 
 const TOKEN_KEY = "saas_token";
