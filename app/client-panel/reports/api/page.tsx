@@ -103,23 +103,18 @@ export default function ApiReportPage() {
               <span className="text-sm font-semibold">Date</span>
             </div>
 
-            <div className="relative">
-              <input
-                type="date"
-                value={dateParam}
-                onChange={(e) => {
-                  const d = new Date(e.target.value);
-                  if (!Number.isNaN(d.getTime())) {
-                    setSelectedDate(d);
-                    setPage(1);
-                  }
-                }}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              <div className="px-4 py-2 rounded-md bg-gray-50 border border-gray-200 text-sm text-gray-700 min-w-[140px]">
-                {formatDateLabel(selectedDate)}
-              </div>
-            </div>
+            <input
+              type="date"
+              value={dateParam}
+              onChange={(e) => {
+                const d = new Date(e.target.value + "T00:00:00");
+                if (!Number.isNaN(d.getTime())) {
+                  setSelectedDate(d);
+                  setPage(1);
+                }
+              }}
+              className="px-3 py-2 rounded-md bg-gray-50 border border-gray-200 text-sm text-gray-700 min-w-[140px] outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           <div className="flex items-center gap-2">
